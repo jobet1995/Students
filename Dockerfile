@@ -20,8 +20,6 @@ FROM node:20-alpine as production
 
 WORKDIR /app .
 
-COPY --from=build /app .
-
 COPY . .
 
 RUN npm install -g serve
