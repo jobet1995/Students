@@ -1,37 +1,45 @@
-# Stage 1: Build the Vue.js Frontend
-FROM node:20 as frontend-build
+# Stage 1: Base Image for Dependencies
+FROM node:20 as dependencies
 
+# Set working directory for frontend dependencies
 WORKDIR /app/frontend
 
-# Copy only the package.json and package-lock.json first to leverage Docker cache
+# Copy only package.json and package-lock.json for frontend
 COPY frontend/package*.json ./
 RUN npm install
 
-# Copy the rest of the frontend files and build
+# Set working directory for backend dependencies
+WORKDIR /app/backend
+
+# Copy only package.json and package-lock.json for backend
+COPY backend/package*.json ./
+RUN npm install
+
+# Stage 2: Build Stage
+FROM dependencies as build
+
+# Set working directory for frontend build
+WORKDIR /app/frontend
 COPY frontend .
 RUN npm run build
 
+# Stage 3: Final Image for Production
+FROM node:20-alpine as production
 
-# Stage 2: Prepare NGINX to Serve Frontend
-FROM nginx:latest
+# Set working directory for backend
+WORKDIR /app/backend
 
-# Remove default NGINX configuration
-RUN rm /etc/nginx/nginx.conf /etc/nginx/conf.d/default.conf
+# Copy built frontend files from build stage
+COPY --from=build /app/frontend/dist ./frontend/dist
 
-# Copy custom NGINX configuration and SSL certificates
-COPY nginx/nginx.conf /etc/nginx/nginx.conf
-COPY nginx/nginx.crt /etc/nginx/nginx.crt
-COPY nginx/nginx.key /etc/nginx/nginx.key
+# Copy backend source code
+COPY backend .
 
-# Set working directory for static files
-WORKDIR /usr/share/nginx/html
+# Install serve to run the production server (optional, adjust as needed)
+RUN npm install -g serve
 
-# Copy built frontend files from frontend-build stage to NGINX html directory
-COPY --from=frontend-build /app/frontend/dist .
+# Expose the port that serve will use
+EXPOSE 3000
 
-# Expose NGINX ports (HTTP and HTTPS)
-EXPOSE 80
-EXPOSE 443
-
-# Start NGINX in foreground
-CMD ["nginx", "-g", "daemon off;"]
+# Command to start the production server
+CMD serve -s frontend/dist -p 3000
