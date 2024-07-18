@@ -20,7 +20,7 @@ FROM node:20-alpine as production
 
 WORKDIR /app .
 
-COPY --from=build /app/dist .
+COPY --from=build /app .
 
 COPY . .
 
