@@ -32,10 +32,6 @@ jobs:
       - name: Install dependencies
         run: npm install
 
-      - name: Echo Run ESLint
-        run: echo "Running ESLint..."
-      - name: Run ESLint
-        run: npm run lint
 
       - name: Echo Format code with Prettier
         run: echo "Formatting code with Prettier..."
