@@ -6,14 +6,28 @@
   "scripts": {
     "dev": "vite",
     "build": "vite build",
-    "preview": "vite preview"
+    "preview": "vite preview",
+    "prepare": "husky",
+    "prettier": "prettier --write \"**/*.{js,ts,vue}\"",
+    "prettier:verify": "prettier --check \"**/*.{js,ts,vue}\"",
+    "lint": "eslint \"**/*.{js,ts,vue}\""
   },
   "dependencies": {
     "vue": "^3.4.29"
   },
   "devDependencies": {
+    "@eslint/compat": "^1.1.1",
+    "@eslint/js": "^8.0.0",
     "@vitejs/plugin-vue": "^5.0.5",
+    "eslint": "^8.0.0",
+    "eslint-plugin-react": "^7.34.4",
+    "globals": "^15.8.0",
+    "husky": "^9.1.0",
+    "lint-staged": "^15.2.7",
     "prettier": "3.3.3",
     "vite": "^5.3.1"
+  },
+  "lint-staged": {
+    "**/*": "prettier --write --ignore-unknown"
   }
 }
