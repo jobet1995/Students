@@ -1,68 +1,48 @@
 # Stage 1: Build the Vue.js Frontend
-FROM node:14 as frontend-build
+FROM node:20 as frontend-build
 
 WORKDIR /app/frontend
 
-# Check if ESLint and Prettier are initialized
-RUN if [ ! -f .eslintrc.js ]; then \
-        echo "ESLint not initialized. Initializing ESLint..."; \
-        npx eslint --init; \
-    fi
-
-RUN if [ ! -f .prettierrc ]; then \
-        echo "Prettier not initialized. Initializing Prettier..."; \
-        npx --yes prettier --init; \
-    fi
-
+# Copy only the package.json and package-lock.json first to leverage Docker cache
 COPY frontend/package*.json ./
-
 RUN npm install
 
+# Copy the rest of the frontend files and build
 COPY frontend .
-
-RUN echo "Building Vue.js frontend..."
 RUN npm run build
 
 
 # Stage 2: Build the Node.js Backend
-FROM node:14 as backend-build
+FROM node:20 as backend-build
 
 WORKDIR /app/backend
 
+# Copy only the package.json and package-lock.json first to leverage Docker cache
 COPY backend/package*.json ./
-
-RUN echo "Installing backend dependencies..."
 RUN npm install
 
+# Copy the rest of the backend files
 COPY backend .
-
-EXPOSE 3000
-
-CMD ["npm", "start"]
 
 
 # Stage 3: Combine Frontend and Backend into Production Image
-FROM node:14 as production
-
-WORKDIR /app
-
-COPY --from=frontend-build /app/frontend/dist ./frontend/dist
-
-COPY --from=backend-build /app/backend .
-
-RUN npm install --only=production
-
-
-# Install NGINX
 FROM nginx:latest
 
+# Set environment variables
+ENV NGINX_PORT=80
+ENV NGINX_SERVER_NAME=localhost
+
+# Copy built frontend files from frontend-build stage to NGINX html directory
+COPY --from=frontend-build /app/frontend/dist /usr/share/nginx/html
+
+# Copy backend files from backend-build stage (if needed)
+COPY --from=backend-build /app/backend /usr/share/nginx/html/backend
+
+# Copy custom NGINX configuration file
 COPY nginx/nginx.conf /etc/nginx/nginx.conf
 
-# Copy built frontend files from production stage
-COPY --from=production /app/frontend/dist /usr/share/nginx/html
-
 # Expose NGINX port
-EXPOSE 80
+EXPOSE $NGINX_PORT
 
 # Start NGINX
 CMD ["nginx", "-g", "daemon off;"]
