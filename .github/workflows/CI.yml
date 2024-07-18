@@ -1,70 +1,60 @@
-name: Vue Continues Integration
+name: Continues Integration
 
 on:
   push:
-     branches:
+    branches:
       - main
   pull_request:
-     branches:
+    branches:
       - main
 
 jobs:
   build:
     runs-on: ubuntu-latest
 
-    steps: 
-      - name: Checkout Repository
-        run: echo "Checking out repository"
-        
+    steps:
+      - name: Echo Checkout repository
+        run: echo "Checking out repository..."
+
       - name: Checkout repository
         uses: actions/checkout@v2
 
-      - name: setup Node.js
-        run: echo "Setting up Node.js
+      - name: Echo Set up Node.js
+        run: echo "Setting up Node.js..."
 
       - name: Set up Node.js
         uses: actions/setup-node@v2
         with:
-          node-version: '20'
+          node-version: '14'
 
-      - name: Installing Dependencies
-        run: echo "Install Dependencies
-
-      - name: Install Dependencies
-        run: npm install
+      - name: Echo Install dependencies
+        run: echo "Installing dependencies..."
+      - name: Install dependencies
+        run: npm ci
 
       - name: Echo Run ESLint
-        run: echo "Running ESLint"
-
+        run: echo "Running ESLint..."
       - name: Run ESLint
         run: npm run lint
 
+      - name: Echo Format code with Prettier
+        run: echo "Formatting code with Prettier..."
+      - name: Format code with Prettier
+        run: npm run format-check
 
-      - name: Format Code
-        run: echo "Formatting code with prettier"
-
-      - name: Running Prettier
-        run: npm run prettier
-
-      - name: Verify Prettier
-        run: echo "Verifying Prettier"
-
-      - name: Running Prettier Check
-        run: npm run prettier:verify
-
-      - name: Building the App
-        run: echo "Building the App"
-
-      - name: Running Build
+      - name: Echo Build Vue.js app
+        run: echo "Building Vue.js app..."
+      - name: Build Vue.js app
         run: npm run build
 
-      - name: Running Test
-        run: echo "Running Test"
+      - name: Echo Run tests
+        run: echo "Running tests..."
+      - name: Run tests
+        run: npm test
 
-      - name: Test Run
-        run: npm run test
-
-      - name: Archiving Artifact
+      - name: Echo Archive artifacts
+        run: echo "Archiving artifacts..."
+      - name: Archive artifacts
         uses: actions/upload-artifact@v2
         with:
           name: vuejs-app
