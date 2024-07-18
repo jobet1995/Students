@@ -25,12 +25,12 @@ jobs:
       - name: Set up Node.js
         uses: actions/setup-node@v2
         with:
-          node-version: '14'
+          node-version: '20'
 
       - name: Echo Install dependencies
         run: echo "Installing dependencies..."
       - name: Install dependencies
-        run: npm ci
+        run: npm install
 
       - name: Echo Run ESLint
         run: echo "Running ESLint..."
@@ -40,7 +40,13 @@ jobs:
       - name: Echo Format code with Prettier
         run: echo "Formatting code with Prettier..."
       - name: Format code with Prettier
-        run: npm run format-check
+        run: npm run prettier
+
+      - name: Echo Verifying Prettier
+        run: echo "Running Verify"
+
+      - name: Running Verify
+        run: npm run prettier:verify
 
       - name: Echo Build Vue.js app
         run: echo "Building Vue.js app..."
