@@ -10,7 +10,8 @@
     "prepare": "husky",
     "prettier": "prettier --write \"**/*.{js,ts,vue}\"",
     "prettier:verify": "prettier --check \"**/*.{js,ts,vue}\"",
-    "lint": "eslint \"**/*.{js,ts,vue}\""
+    "lint": "eslint \"**/*.{js,ts,vue}\"",
+    "test": "jest"
   },
   "dependencies": {
     "vue": "^3.4.29"
