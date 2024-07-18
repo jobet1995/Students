@@ -1,0 +1,71 @@
+name: Vue Continues Integration
+
+on:
+  push:
+     branches:
+      - main
+  pull_request:
+     branches:
+      - main
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps: 
+      - name: Checkout Repository
+        run: echo "Checking out repository"
+        
+      - name: Checkout repository
+        uses: actions/checkout@v2
+
+      - name: setup Node.js
+        run: echo "Setting up Node.js
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v2
+        with:
+          node-version: '20'
+
+      - name: Installing Dependencies
+        run: echo "Install Dependencies
+
+      - name: Install Dependencies
+        run: npm install
+
+      - name: Echo Run ESLint
+        run: echo "Running ESLint"
+
+      - name: Run ESLint
+        run: npm run lint
+
+
+      - name: Format Code
+        run: echo "Formatting code with prettier"
+
+      - name: Running Prettier
+        run: npm run prettier
+
+      - name: Verify Prettier
+        run: echo "Verifying Prettier"
+
+      - name: Running Prettier Check
+        run: npm run prettier:verify
+
+      - name: Building the App
+        run: echo "Building the App"
+
+      - name: Running Build
+        run: npm run build
+
+      - name: Running Test
+        run: echo "Running Test"
+
+      - name: Test Run
+        run: npm run test
+
+      - name: Archiving Artifact
+        uses: actions/upload-artifact@v2
+        with:
+          name: vuejs-app
+          path: dist
